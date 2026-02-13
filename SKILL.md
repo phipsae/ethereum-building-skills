@@ -1,6 +1,6 @@
 ---
 name: ethereum-building
-description: Opinionated playbook for AI agents building production Ethereum dApps (Feb 2026). Covers contracts, testing, security, frontend, and deployment.
+description: Opinionated playbook for building production Ethereum dApps. Use when asked to build, create, or develop smart contracts, dApps, tokens (ERC-20, ERC-721), DeFi protocols, staking apps, NFT projects, DAOs, or any Solidity/blockchain project. Also use for Ethereum-related tasks like writing Foundry tests, auditing contract security, building a wagmi frontend, or deploying contracts to mainnet/L2s. Covers the full lifecycle — contracts, testing, security, frontend, and deployment.
 ---
 
 # Ethereum Building Skill
