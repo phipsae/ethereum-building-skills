@@ -18,10 +18,12 @@ You are building an Ethereum dApp. This skill tells you how to do it correctly. 
 
 ## Hard Rules (apply to ALL phases)
 
-1. **ALWAYS fork mode.** `anvil --fork-url https://eth.llamarpc.com` — NEVER use a blank local chain. Blank chains have no tokens, no protocols, no liquidity. Fork mode has everything.
+1. **Fork mode for protocol integration.** If your dApp interacts with ANY external protocol (tokens, Uniswap, Aave, Chainlink, etc.): `anvil --fork-url <rpc>`. For dApps using only native ETH with no external contracts, plain `anvil` is acceptable.
+   - **RPC options (in order of preference):** your own Alchemy/Infura URL, `https://eth.llamarpc.com`, `https://rpc.ankr.com/eth`, `https://eth.drpc.org`. If one rate-limits you, try the next.
 2. **NEVER hallucinate contract addresses.** If you need a protocol address (Uniswap, USDC, Aave, etc.), fetch it from `https://ethskills.com/addresses/SKILL.md`. If that URL returns HTML, use the raw GitHub source. Never guess.
 3. **Nothing is automatic on Ethereum.** Every public function that changes state needs a caller with an incentive. Design for this.
 4. **Secrets in `.env.local` only.** RPC URLs, API keys, private keys — never committed, always in `.gitignore`.
+5. **All forge/cast commands run from inside `contracts/`.** Always `cd contracts` before running `forge build`, `forge test`, `forge script`, etc. Running from the project root will fail or compile wrong files.
 
 ## Project Setup
 
@@ -46,9 +48,10 @@ cd frontend && npm install wagmi viem @rainbow-me/rainbowkit @tanstack/react-que
 echo 'NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=<get from cloud.walletconnect.com>' > frontend/.env.local
 echo 'NEXT_PUBLIC_ALCHEMY_API_KEY=<your key>' >> frontend/.env.local
 
-# 5. Fork mainnet (in a separate terminal)
+# 5. Fork mainnet (in a separate terminal) — see RPC options in Hard Rules above
 anvil --fork-url https://eth.llamarpc.com
 # Note: Anvil defaults to chainId 31337 even when forking mainnet
+# For ETH-only dApps with no external protocols, plain `anvil` is also fine
 
 # 6. Enable block mining (so txs don't hang)
 cast rpc anvil_setIntervalMining 1
@@ -66,7 +69,7 @@ cast rpc anvil_stopImpersonatingAccount <whale_address>
 
 ### Full Build (user asks to "build X")
 
-Present an architecture plan first: which contracts, their interfaces, deploy order, cross-contract calls, frontend pages, external protocol integrations. Get user approval, then execute phases sequentially:
+Present an architecture plan first: which contracts, their interfaces, deploy order, cross-contract calls, frontend pages, external protocol integrations. **Include reasonable default values for constructor parameters** (thresholds, deadlines, fees) — explain your choices to the user. For dev/demo, use values that allow easy testing (e.g., a 2-minute deadline, not 30 seconds). Get user approval, then execute phases sequentially:
 
 1. **Contracts** → read `contracts/SKILL.md`
 2. **Testing** → read `testing/SKILL.md`
@@ -86,4 +89,14 @@ Present an architecture plan first: which contracts, their interfaces, deploy or
 | "Fix a bug in my contract" | Phases 1 → 2 → 3 (fix, test, re-check) |
 | "Add a feature to my dApp" | Phases 1 → 2 → 3 → 4 → 5 (skip setup) |
 
-Load sub-skills by reading the file at the path relative to this skill's root (e.g., `contracts/SKILL.md`). Only load the sub-skill you need — never load all 5 at once.
+### How to Load Sub-Skills
+
+Sub-skill paths are relative to this file's location. If you fetched this file from a URL, replace `SKILL.md` in the URL with the sub-skill path.
+
+Example: if this file is at `https://raw.githubusercontent.com/phipsae/ethereum-building-skills/main/SKILL.md`, then:
+- `contracts/SKILL.md` → `https://raw.githubusercontent.com/phipsae/ethereum-building-skills/main/contracts/SKILL.md`
+- `frontend/SKILL.md` → `https://raw.githubusercontent.com/phipsae/ethereum-building-skills/main/frontend/SKILL.md`
+
+**Important:** When fetching sub-skills via URL, use raw file reads (curl, Read tool) — NOT summarizing tools like WebFetch. The sub-skills contain exact code templates that must be followed verbatim.
+
+Only load the sub-skill you need — never load all 5 at once.

@@ -40,10 +40,26 @@ One-line reminders of what happens when you skip these:
 
 Can't determine if a checklist item applies? **Implement the protection anyway.** The cost of an unnecessary guard is near zero gas. The cost of a missing one is catastrophic.
 
+## Required Output
+
+Add a `// SECURITY REVIEW` comment block at the top of each contract file documenting the review:
+
+```solidity
+// SECURITY REVIEW — <date>
+// [PASS] Reentrancy: nonReentrant + CEI on withdraw()
+// [PASS] Access control: onlyOwner on setFee()
+// [N/A]  Oracle usage: no oracles used
+// [PASS] SafeERC20: used for all token ops
+// ...
+```
+
+This is mandatory. Without a concrete artifact, the review didn't happen.
+
 ## Exit Criteria
 
-- [ ] Every checklist item explicitly PASSES or has documented justification for why it doesn't apply
+- [ ] Every checklist item explicitly PASSES, FAILS, or N/A — documented in the comment block above
 - [ ] No items left unchecked
+- [ ] Comment block added to the top of each contract
 
 **If any item fails** → go back to Phase 1 (contracts), fix the issue, re-run Phase 2 (tests), then re-audit.
 

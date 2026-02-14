@@ -201,9 +201,10 @@ Before moving to deploy, verify manually:
 
 ## Exit Criteria
 
+- [ ] `frontend/.env.local` exists with real `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` (not a placeholder)
 - [ ] Full user journey works on localhost with wallet connected
 - [ ] All buttons have loading states (no raw clicks)
-- [ ] Approve flow works (two-step)
+- [ ] Approve flow works (two-step, if applicable)
 - [ ] Success only shown after tx confirmation, not after signing
 
 Next → load `deploy/SKILL.md`

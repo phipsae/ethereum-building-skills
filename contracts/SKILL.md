@@ -29,6 +29,8 @@ These are the things you WILL get wrong if you don't read this:
 
 ## Foundry Setup
 
+**All forge commands must run from inside `contracts/`.** Always `cd contracts` first.
+
 ```bash
 cd contracts
 forge install OpenZeppelin/openzeppelin-contracts --no-git
@@ -40,6 +42,12 @@ Create `contracts/remappings.txt`:
 ```
 
 Verify `contracts/lib/forge-std/` exists. If not: `forge install foundry-rs/forge-std --no-git`
+
+Add fuzz testing config to `contracts/foundry.toml`:
+```toml
+[fuzz]
+runs = 1000
+```
 
 Write contracts in `contracts/src/`. Write deploy scripts in `contracts/script/`.
 
