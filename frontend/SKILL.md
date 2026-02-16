@@ -167,6 +167,8 @@ const display = formatUnits(rawAmount, 6); // USDC: 6 decimals
 const onchain = parseUnits(userInput, 6);
 ```
 
+**BigInt comparisons:** Use `BigInt(0)` instead of `0n` literal. Default Next.js TypeScript config targets ES2019 which doesn't support BigInt literals.
+
 ## Development Chain Config
 
 - Anvil fork = chainId 31337. Your wagmi config uses `foundry` from `viem/chains`.

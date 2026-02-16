@@ -38,6 +38,7 @@ git init
 
 # 2. Contracts (Foundry)
 forge init contracts --no-git
+rm contracts/src/Counter.sol contracts/script/Counter.s.sol contracts/test/Counter.t.sol  # Remove template files
 # Verify forge-std: ls contracts/lib/forge-std/ (if missing: cd contracts && forge install foundry-rs/forge-std --no-git)
 
 # 3. Frontend (Next.js + wagmi)

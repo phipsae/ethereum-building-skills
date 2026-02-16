@@ -120,6 +120,7 @@ function invariant_totalSharesNeverExceedAssets() public view {
 | Fork tests timeout | RPC URL invalid or rate-limited — try `https://eth.llamarpc.com` |
 | Tests pass alone, fail together | Shared state — ensure `setUp()` resets everything |
 | Fuzz finds failure | Failing input is printed — write a regression unit test with that exact input |
+| `vm.expectRevert()` expects wrong call | Compute all args BEFORE expectRevert. View calls in args (like `token.decimals()`) execute first. Pre-compute: `uint256 amt = 100 * 10**token.decimals(); vm.expectRevert(); contract.fn(amt);` |
 
 ## Exit Criteria
 

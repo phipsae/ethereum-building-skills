@@ -25,7 +25,26 @@ These are the things you WILL get wrong if you don't read this:
 5. **SafeERC20 for everything.** USDT doesn't return a bool on `transfer()`. Without SafeERC20, your contract silently fails.
 6. **Vault inflation attack.** If you're building a vault/pool: use a virtual offset for the first depositor. Without it, an attacker can inflate the share price and steal from the next depositor.
 7. **Never use DEX spot prices as oracles.** They can be manipulated in a single transaction. Use Chainlink with staleness checks.
-8. **Every maintenance function needs an incentive.** Who calls `harvest()`? Who calls `rebalance()`? If the answer is "someone will," it won't happen. Design a caller reward.
+8. **Every maintenance function needs an incentive.** Who calls `harvest()`? Who calls `rebalance()`? If the answer is "someone will," it won't happen. Design a caller reward:
+   ```solidity
+   uint256 public constant HARVEST_REWARD_BPS = 100; // 1% to caller
+   function harvest() external {
+       uint256 yield = externalProtocol.claim();
+       uint256 callerReward = (yield * HARVEST_REWARD_BPS) / 10000;
+       rewardToken.transfer(msg.sender, callerReward);
+       rewardToken.transfer(treasury, yield - callerReward);
+       emit Harvested(msg.sender, yield, callerReward);
+   }
+   ```
+
+## Events
+
+Emit events for ALL state changes. Every function that modifies state must emit at least one event:
+```solidity
+event Staked(address indexed user, uint256 amount);
+event Withdrawn(address indexed user, uint256 amount, uint256 reward);
+```
+Index addresses with `indexed` for efficient filtering. Events enable frontend reactivity (no polling), off-chain indexing (The Graph), and bot monitoring. They cost minimal gas and are critical for production dApps.
 
 ## Foundry Setup
 
@@ -85,7 +104,7 @@ function run() external {
 }
 ```
 
-**Deploy to local fork:**
+**Deploy to local fork (for testing — production deployment is in Phase 5):**
 ```bash
 forge script script/Deploy.s.sol \
   --rpc-url http://localhost:8545 \
@@ -114,7 +133,7 @@ After deploying, the frontend needs ABIs and addresses:
 
 1. **ABIs** are in `contracts/out/<ContractName>.sol/<ContractName>.json` — extract only the `abi` field.
 2. **Deployed addresses** are in `contracts/broadcast/Deploy.s.sol/<chainId>/run-latest.json` — look for `contractAddress` in the `transactions` array.
-3. Create `frontend/contracts/deployedContracts.ts`:
+3. Create `frontend/contracts/deployedContracts.ts` (create the directory first: `mkdir -p frontend/contracts`):
 
 ```typescript
 export const deployedContracts = {
@@ -142,7 +161,7 @@ The `as const` is mandatory — without it, viem can't infer types and wagmi hoo
 ## Exit Criteria
 
 - [ ] All contracts compile (`forge build` succeeds)
-- [ ] Deploy script runs on local fork
+- [ ] Deploy script tested on local fork (contracts deployed and ABIs exported)
 - [ ] `frontend/contracts/deployedContracts.ts` created with ABIs + addresses
 
 Next → load `testing/SKILL.md`
